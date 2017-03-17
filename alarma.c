@@ -3,6 +3,7 @@
 #include <math.h>
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <signal.h>
 #include "motor.h"
 
 #define MOTORES 2															// Motores que tiene el robot
@@ -19,9 +20,19 @@
 
 typedef enum {CORRIENDO, APLAZAR, FIN} estados;								// Distintos estados en los que puede estar el robot
 
+struct sigaction osa;
+
+void bypass_sigint(int sig_no);
+
 int main (void)
 {
 	estados state;
+	struct sigaction sa,osa;
+
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = &bypass_sigint;
+    sigaction(SIGINT, &sa,&osa);
+
 	wiringPiSetupGpio();													// Setup de la interfaz GPIO
 
 	pinMode(PIN_FIN , INPUT);												// Boton que finaliza la alarma
@@ -93,4 +104,13 @@ int main (void)
 	}
 
 	return 0;
+}
+
+void bypass_sigint(int sig_no)
+{
+	digitalWrite(PIN_BUZZER, LOW);
+ 	stopMotors();
+	
+	sigaction(SIGINT,&osa,NULL);
+    kill(0,SIGINT);
 }
