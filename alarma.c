@@ -32,6 +32,12 @@ int main (void)
 	pinMode(PIN_PROX_C, INPUT);												// Sensor de proximidad centro
 	pinMode(PIN_PROX_D, INPUT);												// Sensor de proximidad derecho
 
+	pullUpDnControl(PIN_FIN, PUD_DOWN);
+	pullUpDnControl(PIN_APLAZA, PUD_DOWN);
+	pullUpDnControl(PIN_PROX_I, PUD_DOWN);
+	pullUpDnControl(PIN_PROX_D, PUD_DOWN);
+	pullUpDnControl(PIN_PROX_C, PUD_DOWN);
+
 
 	state = CORRIENDO;														// Estado inicial
 
@@ -44,8 +50,12 @@ int main (void)
 	{
 		if (state == CORRIENDO)												// Estamos en el estado en el que nos movemos
 		{
-			int vel_der = (1 - digitalRead(PIN_PROX_I)) * pow(-1, digitalRead(PIN_PROX_C)) * 50;
-			int vel_izq = (1 - digitalRead(PIN_PROX_D)) * pow(1, digitalRead(PIN_PROX_C)) * 50;
+			int prox_i = digitalRead(PIN_PROX_I);
+			int prox_d = digitalRead(PIN_PROX_I);
+			int prox_c = digitalRead(PIN_PROX_I);
+
+			int vel_der = (1 - prox_i) * pow(-1, prox_c) * 50;
+			int vel_izq = (1 - prox_d) * pow(1, prox_c) * 50;
 
 			setSpeed(0, vel_izq);											// Ponemos una velocidad en la rueda derecha
 			setSpeed(1, vel_der);											// Ponemos una velocidad en la rueda izquierda
