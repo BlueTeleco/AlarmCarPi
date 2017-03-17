@@ -5,6 +5,7 @@
 int* motorsPins;
 int size;
 
+// Setup de los motores, usando la lubreria WiringPi
 void setupMotors(int* pins, int nPins){
 	int i;
 	size = nPins;
@@ -15,6 +16,7 @@ void setupMotors(int* pins, int nPins){
 	}
 }
 
+// Funcion que da una velociada 'speed' al motor 'motor'
 void setSpeed(int motor, int speed){
 	if(speed >= 0){
 		softPwmWrite(*(motorPins + 2 * motor), 0); softPwmWrite(*(motorPins + 2 * motor + 1), speed);
@@ -23,6 +25,7 @@ void setSpeed(int motor, int speed){
 	}
 }
 
+// Para todos los motores
 void stopMotors()
 {
 	int i;
