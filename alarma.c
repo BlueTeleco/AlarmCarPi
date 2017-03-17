@@ -2,84 +2,75 @@
 #include <stdio.h>
 #include <wiringPi.h>
 #include <softPwm.h>
+#include "motor.h"
 
-enum estado {LENTO, MEDIO, RAPIDO, FIN};
+#define MOTORES 2							// Motores que tiene el robot
+#define NUM_PINES_MOT 2							// Numero de pines que usa cada motor
+
+#define PIN_FIN 1							// Numero de pin del boton de fin 
+#define PIN_APLAZA 2							// Numero de pin del boton de aplazar
+#define PIN_BUZZER 3							// Numero de pin del buzzer
+
+enum estado {CORRIENDO, APLAZAR, FIN};					// Distintos estados en los que puede estar el robot
 
 int main (void)
 {
+	wiringPiSetupGpio();						// Setup de la interfaz GPIO
 
-	wiringPiSetupGpio();					// Setup de la interfaz GPIO
+	pinMode(PIN_FIN , INPUT);					// Boton que finaliza la alarma
+	pinMode(PIN_APLAZA, INPUT);					// Boton que aplaza la alarma
+	pinMode(PIN_BUZZER, OUTPUT);					// Buzzer
 
-	pinMode(18, INPUT);					// Boton que finaliza la alarma
+	digitalWrite(PIN_BUZZER, HIGH);					// Inicia el buzzer
+	estados state = CORRIENDO;					// Estado inicial
 
-	pinMode(22, OUTPUT);					// Buzzer
+	int timeAplaz;
 
-	pinMode(23, PWM_OUTPUT);				// Salidas  del motor 1
-	pinMode(24, PWM_OUTPUT);				// Con las que definiremos la velocidad y sentido
-	
-	pinMode(3, PWM_OUTPUT);					// Salidas  del motor 2
-	pinMode(4, PWM_OUTPUT);					// Con las que definiremos la velocidad y sentido
-
-	estados state = LENTO;					// Estado inicial
-	int timeIni = millis();					// Tiempo inicial
-
-	digitalWrite(17, HIGH);					// Inicia el motor 1
-	digitalWrite(21, HIGH);					// Inicia el motor 2
-	digitalWrite(22, HIGH);					// Inicia el buzzer
-	softPwmCreate(18, 0, 100);				// Inicializa el motor 1
-	softPwmCreate(22, 0, 100);				// Inicializa el motor 2
-
-	while(state != FIN)					// Mientras que no se haya pulsado el boton para finalizar la alarma (no estamos en el estado FIN)
+	int pines_motores[MOTORES*NUM_PINES_MOT] = {};			// Pines de nuestros motores
+	setupMotors(*pines_motores, MOTORES*NUM_PINES_MOT);		// Setup de los motores
+		
+	while(1)							// Mientras que no se haya pulsado el boton para finalizar la alarma (no estamos en el estado FIN)
 	{
-		if (state == LENTO)				// Si estamos en el estado de movernos lentamente
+		if (state == CORRIENDO)					// Estamos en el estado en el que nos movemos
 		{
-			if (millis() - timeIni >= 300000)	// Cuando pasan 5 minutos pasamos al siguiente estado, y volvemos a cambiar el valor inicial del contador
-			{
-				state = MEDIO;			
-				timeIni = millis();
-			}	
+			setSpeed(0, 50);				// Ponemos una velocidad en el motor 0
+			setSpeed(1, 50);				// Ponemos una velocidad en el motor 1
+			digitalWrite(PIN_BUZZER, HIGH);			// Encendemos el buzzer
 
-			if (digitalRead(18) == HIGH)		// Si se pulsa el boton de apago de la alarma pasamos al estado de fin
+			if (digitalRead(PIN_FIN) == HIGH)		// Si se pulsa el boton de apago de la alarma 
 			{
-				state = FIN;			
+				state = FIN;				// Pasamos al estado de FIN
 			}	
-
-			softPwmWrite(23, 30);
-			softPwmWrite(24, 30);
+			
+			if (digitalRead(PIN_APLAZA) == HIGH)		// Si se pulsa el boton de aplazar la alarma 
+			{
+				state = APLAZAR;			// Pasamos al estado de APLAZAR		
+				timeAplaz = millis();			// Iniciamos el contador del tiempo
+				digitalWrite(PIN_BUZZER, LOW);		// Apagamos el buzzer
+				stopMotors();				// Apagamos los motores
+			}	
 		}
 
-		if (state == MEDIO)				// Si estamos en el estado de movernos a velocidad media
+		if (state == APLAZAR)					// Estamos en el estado de aplazar la alarma
 		{
-			if (millis() - timeIni >= 600000)	// Cuando pasan 10 minutos mÃs pasamos al siguiente estado
+			if (millis() - timeAplaz >= 600000)		// Si pasan 10 minutos desde el aplazamiento, vuelve a sonar la alarma
 			{
-				state = RAPIDO;			
-			}	
+				state = CORRIENDO;
+			} 
 
-			if (digitalRead(18) == HIGH)		// Si se pulsa el boton de apago de la alarma pasamos al estado de fin
+			if (digitalRead(PIN_FIN) == HIGH)		// Si se pulsa el boton de apago de la alarma pasamos al estado de FIN
 			{
 				state = FIN;			
 			}	
-
-			softPwmWrite(23, 60);
-			softPwmWrite(24, 60);
 		}
 
-		if (state == RAPIDO)				// Si estamos en el estado de movernos rapidamente
+		if (state == FIN)					// Estamos en el estado de finalizar la alarma
 		{
-			if (digitalRead(18) == HIGH)		// Si se pulsa el boton de apago de la alarma pasamos al estado de fin
-			{
-				state = FIN;			
-			}	
-
-			softPwmWrite(23, 90);
-			softPwmWrite(24, 90);
+			digitalWrite(PIN_BUZZER, LOW);			// Paramos el buzzer 
+			stopMotors();					// Paramos los motores
+			break;						// Terminamos
 		}
 	}
 
-	softPwmWrite (23, 0);					// Paramos el motor 1
-	softPwmWrite (24, 0);					// Paramos el motor 1
-	digitalWrite(17, LOW);					// Paramos el motor 1
-	digitalWrite(21, LOW);					// Paramos el motor 2 
-	digitalWrite(22, LOW);					// Paramos el buzzer 
 	return 0;
 }
