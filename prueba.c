@@ -13,8 +13,6 @@ int main (void)
 	setSpeed(0, 0); setSpeed(1, 100); delay(2000);
 
 	printf("fin\n");
-	setSpeed(0, 0);
-	setSpeed(1, 0);
-	delay(1000);
+	stopMotors();
 	return 0 ;
 }
