@@ -1,9 +1,9 @@
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
 #include <wiringPi.h>
 #include <softPwm.h>
 #include "motor.h"
-#include <math.h>
 
 #define MOTORES 2															// Motores que tiene el robot
 #define NUM_PINES_MOT 2														// Numero de pines que usa cada motor
@@ -44,8 +44,8 @@ int main (void)
 	{
 		if (state == CORRIENDO)												// Estamos en el estado en el que nos movemos
 		{
-			int vel_der = (1 - digitalRead(PIN_PROX_I)) * Math.pow(-1, digitalRead(PIN_PROX_C)) * 50;
-			int vel_izq = (1 - digitalRead(PIN_PROX_D)) * Math.pow(1, digitalRead(PIN_PROX_C)) * 50;
+			int vel_der = (1 - digitalRead(PIN_PROX_I)) * pow(-1, digitalRead(PIN_PROX_C)) * 50;
+			int vel_izq = (1 - digitalRead(PIN_PROX_D)) * pow(1, digitalRead(PIN_PROX_C)) * 50;
 
 			setSpeed(0, vel_izq);											// Ponemos una velocidad en la rueda derecha
 			setSpeed(1, vel_der);											// Ponemos una velocidad en la rueda izquierda
