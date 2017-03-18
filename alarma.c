@@ -1,9 +1,13 @@
+											// Librerias estandar
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <signal.h>
+											// Librerias para la interfaz con GPIO
 #include <wiringPi.h>
 #include <softPwm.h>
-#include <signal.h>
+											// Drivers propios
+#include "alarma.h"
 #include "motor.h"
 
 #define MOTORES 2									// Motores que tiene el robot
@@ -20,17 +24,14 @@
 
 typedef enum {CORRIENDO, APLAZAR, FIN} estados;						// Distintos estados en los que puede estar el robot
 
-struct sigaction osa;
-
-void bypass_sigint(int sig_no);
+struct sigaction sa,osa;
 
 int main (void)
 {
 	estados state;
-	struct sigaction sa,osa;
 
-   	memset(&sa, 0, sizeof(sa));
-    	sa.sa_handler = &bypass_sigint;
+   	memset(&sa, 0, sizeof(sa));							// Expandimos la funcionalidad al llegar una señal de interrupcion
+    	sa.sa_handler = &bypass_sigint;							// Para asegurarnos de apagar los motores y el buzzer si esto ocurre
     	sigaction(SIGINT, &sa,&osa);
 
 	wiringPiSetupGpio();								// Setup de la interfaz GPIO
@@ -43,7 +44,7 @@ int main (void)
 	pinMode(PIN_PROX_C, INPUT);							// Sensor de proximidad centro
 	pinMode(PIN_PROX_D, INPUT);							// Sensor de proximidad derecho
 
-	pullUpDnControl(PIN_FIN, PUD_DOWN);
+	pullUpDnControl(PIN_FIN, PUD_DOWN);						// Ponemos una resistencia de pull down en nuestros pines
 	pullUpDnControl(PIN_APLAZA, PUD_DOWN);
 	pullUpDnControl(PIN_PROX_I, PUD_DOWN);
 	pullUpDnControl(PIN_PROX_D, PUD_DOWN);
@@ -59,6 +60,7 @@ int main (void)
 
 	while(1)									// Mientras que no se haya pulsado el boton para finalizar la alarma (no estamos en el estado FIN)
 	{
+		printf("---");
 		if (state == CORRIENDO)							// Estamos en el estado en el que nos movemos
 		{
 			int prox_i = digitalRead(PIN_PROX_I);
@@ -106,11 +108,11 @@ int main (void)
 	return 0;
 }
 
-void bypass_sigint(int sig_no)
+void bypass_sigint(int sig_no)								// En caso de llegada de la señal de interrupcion
 {
 	digitalWrite(PIN_BUZZER, LOW);
  	stopMotors();
 	
 	sigaction(SIGINT,&osa,NULL);
-    kill(0,SIGINT);
+	kill(0,SIGINT);
 }

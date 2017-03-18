@@ -1,9 +1,11 @@
+													// Nuestros drivers
 #include "motor.h"
+													// Biblioteca WirinPi para la interfaz GPIO
 #include <wiringPi.h>
 #include <softPwm.h>
 
-int* motorsPins;
-int size;
+int* motorsPins;											// Puntero al array de los pines de los motores
+int size;												// Numero de pines en el array
 
 // Setup de los motores, usando la lubreria WiringPi
 void setupMotors(int* pins, int nPins){
