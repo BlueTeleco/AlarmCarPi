@@ -61,9 +61,9 @@ int main (void)
 	{
 		if (state == CORRIENDO)												// Estamos en el estado en el que nos movemos
 		{
-			int prox_i = digitalRead(PIN_PROX_I);
-			int prox_d = digitalRead(PIN_PROX_I);
-			int prox_c = digitalRead(PIN_PROX_I);
+			int prox_i = !digitalRead(PIN_PROX_I);
+			int prox_d = !digitalRead(PIN_PROX_D);
+			int prox_c = !digitalRead(PIN_PROX_C);
 
 			int vel_der = (1 - prox_i) * pow(-1, prox_c) * 50;
 			int vel_izq = (1 - prox_d) * pow(1, prox_c) * 50;
@@ -110,7 +110,7 @@ void bypass_sigint(int sig_no)
 {
 	digitalWrite(PIN_BUZZER, LOW);
  	stopMotors();
-	
+
 	sigaction(SIGINT,&osa,NULL);
     kill(0,SIGINT);
 }

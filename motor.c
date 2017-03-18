@@ -29,5 +29,5 @@ void stopMotors()
 	for ( i = 0; i < size; i++ ) {
 		softPwmWrite(*(motorPins + i), 0);
 	}
-	delay(500);
+	delay(100);
 }
