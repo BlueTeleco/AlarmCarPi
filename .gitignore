@@ -3,3 +3,4 @@
 !*.*
 .ftpignore
 .ftpconfig
+node_modules
