@@ -8,7 +8,7 @@ alarms.init().then(()=>{
 	app.use(bodyParser.json({ limit: '50mb' }));
 	app.use('/api', require('./api'))
 
-	app.use('/', express.static(__dirname + '/frontend'));
+	app.use('/', express.static(__dirname + '/frontend/dist'));
 
 	app.listen(3001, function () {
 		console.log('Example app listening on port 3001!');
