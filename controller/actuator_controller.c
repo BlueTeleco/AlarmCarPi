@@ -11,7 +11,7 @@
 const int motor_pins[MOTORS*NUM_PINS_MOT] = {17, 18, 22, 23};						// Pines de nuestros motores
 
 													// Setup de los actuadores, usando la libreria WiringPi
-void setup (){
+void setup_actuators (){
 	int i;
 	for ( i = 0; i < MOTORS*NUM_PINS_MOT; i++ ) {
 		pinMode(*(motor_pins + i), OUTPUT);
@@ -21,7 +21,7 @@ void setup (){
 	pinMode(PIN_BUZZER, OUTPUT);
 }
 													// Funcion que da una velociad 'speed' al motor 'motor'
-void setSpeed (int motor, int speed){
+void set_speed (int motor, int speed){
 	if(speed >= 0){
 		softPwmWrite(*(motor_pins + 2 * motor), 0); softPwmWrite(*(motor_pins + 2 * motor + 1), speed);
 	} else {
@@ -29,7 +29,7 @@ void setSpeed (int motor, int speed){
 	}
 }
 													// Funcion que para todos los motores
-void stopMotors ()
+void stop_motors ()
 {
 	int i;
 	for ( i = 0; i < size; i++ ) {
@@ -38,12 +38,12 @@ void stopMotors ()
 	delay(100);
 }
 													// Función para activar el buzzer
-void buzzerOn () 
+void buzzer_on () 
 {
 	digitalWrite(PIN_BUZZER, HIGH);
 }
 													// Función para apagar el buzzer
-void buzzerOff () 
+void buzzer_off () 
 {
 	digitalWrite(PIN_BUZZER, LOW);
 	delay(100);

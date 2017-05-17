@@ -1,8 +1,5 @@
-											// Librerias estandar
-#include <stdio.h>
 											// Librerias para la interfaz con GPIO
 #include <wiringPi.h>
-#include <softPwm.h>
 
 #define PIN_FIN 15									// Numero de pin del boton de fin
 #define PIN_APLAZA 14									// Numero de pin del boton de aplazar
@@ -19,7 +16,7 @@ int[3] proximity_s;									// Sensores de proximidad
 int[3] floor_s;										// Sensores de suelo 
 int[2] buttons_s;									// Botones
 
-int setup (void)
+int setup_sensors (void)
 {
 	pinMode(PIN_FIN , INPUT);							// Boton que finaliza la alarma
 	pinMode(PIN_APLAZA, INPUT);							// Boton que aplaza la alarma
