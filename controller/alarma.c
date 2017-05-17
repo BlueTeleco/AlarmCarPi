@@ -11,13 +11,14 @@
 #include "sensor_controller.h"
 
 
-typedef enum {CORRIENDO, APLAZAR, FIN} estados;						// Distintos estados en los que puede estar el robot
+typedef enum {RUNNING, SNOOZE, MED_BATT, LOW_BATT, STOP} estados;			// Distintos estados en los que puede estar el robot
 
 struct sigaction sa,osa;
 
 int main (void)
 {
 	estados state;
+	int base_vel = 50;
 
    	memset(&sa, 0, sizeof(sa));							// Expandimos la funcionalidad al llegar una señal de interrupcion
     	sa.sa_handler = &bypass_sigint;							// Para asegurarnos de apagar los motores y el buzzer si esto ocurre
@@ -25,64 +26,67 @@ int main (void)
 
 	wiringPiSetupGpio();								// Setup de la interfaz GPIO
 
-	state = CORRIENDO;								// Estado inicial
+	state = RUNNING;								// Estado inicial
 
 	setup_actuators();								// Setup de los actuadores
 	setup_sensors();								// Setup de los sensores
 	
-	int timeAplaz;
-	int* proximity = proximity();
-	int* floor = floor();
-	int* buttons = buttons(); 
-
 	while(1)									
 	{
 		read();									// Leo los sensores
 		
-		if (state == CORRIENDO)							// Estamos en el estado en el que nos movemos
+		if (state == RUNNING)							// Estamos en el estado en el que nos movemos
 		{
 			int vel_izq;
 			int vel_der;
 			
-			if(proximity[1]){
-				vel_der = 50;
-				vel_izq = -50;
+			if( proximity_s[1] ) {
+				vel_der = base_vel;
+				vel_izq = -base_vel;
 			} else {
 
-				vel_der = (1 - proximity[0]) * 50;
-				vel_izq = (1 - proximity[2]) * 50;
+				vel_der = (1 - proximity_s[0]) * base_vel;
+				vel_izq = (1 - proximity_s[2]) * base_vel;
 			}
 
 			set_speed(0, vel_izq);						// Ponemos una velocidad en la rueda derecha
 			set_speed(1, vel_der);						// Ponemos una velocidad en la rueda izquierda
 			buzzer_on();							// Encendemos el buzzer
 
-			if (buttons[0] == HIGH)						// Si se pulsa el boton de apago de la alarma
+			if (buttons_s[0] == HIGH)					// Si se pulsa el boton de apago de la alarma
 			{
-				state = FIN;						// Pasamos al estado de FIN
+				state = STOP;						// Pasamos al estado de STOP
 			}
-			else if (buttons[1] == HIGH)					// Si se pulsa el boton de aplazar la alarma
+			else if (buttons_s[1] == HIGH)					// Si se pulsa el boton de aplazar la alarma
 			{
-				state = APLAZAR;					// Pasamos al estado de APLAZAR
+				state = SNOOZE;						// Pasamos al estado de SNOOZE
 				timeAplaz = millis();					// Iniciamos el contador del tiempo
 				buzzer_off();						// Apagamos el buzzer
 				stop_motors();						// Apagamos los motores
 			}
 		}
-		else if (state == APLAZAR)						// Estamos en el estado de aplazar la alarma
+		else if (state == SNOOZE)						// Estamos en el estado de aplazar la alarma
 		{
-			if (buttons[0] == HIGH)						// Si se pulsa el boton de apago de la alarma pasamos al estado de FIN
+			if (buttons_s[0] == HIGH)					// Si se pulsa el boton de apago de la alarma pasamos al estado de STOP
 			{
-				state = FIN;
+				state = STOP;
 			}
 			else if (millis() - timeAplaz >= 600000)			// Si pasan 10 minutos desde el aplazamiento, vuelve a sonar la alarma
 			{
-				state = CORRIENDO;
+				state = RUNNING;
 			}
 		}
-		else if (state == FIN)							// Estamos en el estado de finalizar la alarma
+		else if (state == MED_BATT)						// Estamos en el estado de bateria media, a partir de ahora se moverá a velocidad reducida
 		{
-			buzzer_off();					// Paramos el buzzer
+			base_vel = 25;
+		}
+		else if (state == LOW_BATT)						// Estamos en el estado de bateria baja, a partir de ahora dejara de moverse
+		{
+			base_vel = 0;
+		}
+		else if (state == STOP)							// Estamos en el estado de finalizar la alarma
+		{
+			buzzer_off();							// Paramos el buzzer
 			stopMotors();							// Paramos los motores
 			break;								// Terminamos
 		}

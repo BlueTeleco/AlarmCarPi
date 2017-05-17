@@ -11,7 +11,8 @@
 const int motor_pins[MOTORS*NUM_PINS_MOT] = {17, 18, 22, 23};						// Pines de nuestros motores
 
 													// Setup de los actuadores, usando la libreria WiringPi
-void setup_actuators (){
+void setup_actuators ()
+{
 	int i;
 	for ( i = 0; i < MOTORS*NUM_PINS_MOT; i++ ) {
 		pinMode(*(motor_pins + i), OUTPUT);
@@ -21,7 +22,8 @@ void setup_actuators (){
 	pinMode(PIN_BUZZER, OUTPUT);
 }
 													// Funcion que da una velociad 'speed' al motor 'motor'
-void set_speed (int motor, int speed){
+void set_speed (int motor, int speed)
+{
 	if(speed >= 0){
 		softPwmWrite(*(motor_pins + 2 * motor), 0); softPwmWrite(*(motor_pins + 2 * motor + 1), speed);
 	} else {

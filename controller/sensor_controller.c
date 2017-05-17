@@ -1,8 +1,8 @@
-// Librerias estandar
+											// Librerias estandar
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// Librerias para la interfaz con GPIO
+											// Librerias para la interfaz con GPIO
 #include <wiringPi.h>
 
 #define PIN_FIN 15									// Numero de pin del boton de fin
@@ -39,6 +39,7 @@ void setup_sensors (void)
 
 	fd = serialOpen("/dev/serial0", 9600);
 }
+
 // Funcion que lee los sensores
 void read (void)
 {
