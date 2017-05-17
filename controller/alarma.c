@@ -8,7 +8,7 @@
 #include <softPwm.h>
 											// Drivers propios
 #include "alarma.h"
-#include "motor.h"
+#include "actuator_controller.h"
 
 #define MOTORES 2									// Motores que tiene el robot
 #define NUM_PINES_MOT 2									// Numero de pines que usa cada motor
