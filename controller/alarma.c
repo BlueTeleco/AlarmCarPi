@@ -30,30 +30,32 @@ int main (void)
 
 	setup_actuators();								// Setup de los actuadores
 	setup_sensors();								// Setup de los sensores
-	
-	while(1)									
+
+	int timeAplaz;
+
+	while(1)
 	{
 		read();									// Leo los sensores
-		
-		if (state == RUNNING)							// Estamos en el estado en el que nos movemos
+
+		if (state == CORRIENDO)							// Estamos en el estado en el que nos movemos
 		{
 			int vel_izq;
 			int vel_der;
-			
-			if( proximity_s[1] ) {
-				vel_der = base_vel;
-				vel_izq = -base_vel;
+
+			if(proximity_s[1]){
+				vel_der = 50;
+				vel_izq = -50;
 			} else {
 
-				vel_der = (1 - proximity_s[0]) * base_vel;
-				vel_izq = (1 - proximity_s[2]) * base_vel;
+				vel_der = (1 - proximity_s[0]) * 50;
+				vel_izq = (1 - proximity_s[2]) * 50;
 			}
 
 			set_speed(0, vel_izq);						// Ponemos una velocidad en la rueda derecha
 			set_speed(1, vel_der);						// Ponemos una velocidad en la rueda izquierda
 			buzzer_on();							// Encendemos el buzzer
 
-			if (buttons_s[0] == HIGH)					// Si se pulsa el boton de apago de la alarma
+			if (buttons_s[0] == HIGH)						// Si se pulsa el boton de apago de la alarma
 			{
 				state = STOP;						// Pasamos al estado de STOP
 			}
@@ -67,7 +69,7 @@ int main (void)
 		}
 		else if (state == SNOOZE)						// Estamos en el estado de aplazar la alarma
 		{
-			if (buttons_s[0] == HIGH)					// Si se pulsa el boton de apago de la alarma pasamos al estado de STOP
+			if (buttons_s[0] == HIGH)						// Si se pulsa el boton de apago de la alarma pasamos al estado de FIN
 			{
 				state = STOP;
 			}

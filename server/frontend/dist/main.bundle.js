@@ -39,14 +39,14 @@ module.exports = module.exports.toString();
 /***/ 150:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"alarm\">\n\t{{alarm.hour}}:{{alarm.minute}} {{alarm.repetition}}\n</div>"
+module.exports = "<div class=\"alarm\">\n\t<form class=\"form-inline\" (submit)=\"saveAlarm()\">\n\t\t<div class=\"form-group\">\n\t\t\t<input type=\"time\" [(ngModel)]=\"time\" name=\"time\" class=\"form-control\">\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tD <input type=\"checkbox\" name=\"d\" [(ngModel)]=\"repetitions[0]\" id=\"0\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tL <input type=\"checkbox\" name=\"l\" [(ngModel)]=\"repetitions[1]\" id=\"1\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tM <input type=\"checkbox\" name=\"m\" [(ngModel)]=\"repetitions[2]\" id=\"2\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tX <input type=\"checkbox\" name=\"x\" [(ngModel)]=\"repetitions[3]\" id=\"3\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tJ <input type=\"checkbox\" name=\"j\" [(ngModel)]=\"repetitions[4]\" id=\"4\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tV <input type=\"checkbox\" name=\"v\" [(ngModel)]=\"repetitions[5]\" id=\"5\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<div class=\"checkbox\">\n\t\t\t<label>\n\t\t\t\tS <input type=\"checkbox\" name=\"s\" [(ngModel)]=\"repetitions[6]\" id=\"6\" (ngModelChange)=\"updateRepetitions($event)\">\n\t\t\t</label>\n\t\t</div>\n\t\t<button type=\"submit\" class=\"btn btn-default\">Guardar</button>\n\t\t<button class=\"btn btn-danger\" (click)=\"removeAlarm()\" *ngIf=\"!_newAlarm\">Eliminar</button>\n\t</form>\n\t<!-- {{alarm.hour}}:{{alarm.minute}} {{alarm.repetition}}-->\n</div>"
 
 /***/ }),
 
 /***/ 151:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main\">\n\t<h1 class=\"title\">titulo</h1>\n\t<div *ngFor=\"let alarm of alarms\">\n\t\t<alarm [alarm]=\"alarm\"></alarm>\n\t</div>\n</div>\n"
+module.exports = "<div class=\"main\">\n\t<h1 class=\"title\">titulo</h1>\n\t<div *ngFor=\"let alarm of alarms\">\n\t\t<alarm [alarm]=\"alarm\"></alarm>\n\t</div>\n\t<alarm newAlarm></alarm>\n</div>\n"
 
 /***/ }),
 
@@ -58,26 +58,12 @@ module.exports = __webpack_require__(79);
 
 /***/ }),
 
-/***/ 51:
-/***/ (function(module, exports) {
-
-function webpackEmptyContext(req) {
-	throw new Error("Cannot find module '" + req + "'.");
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 51;
-
-
-/***/ }),
-
-/***/ 54:
+/***/ 29:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise__ = __webpack_require__(156);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AlarmService; });
@@ -104,6 +90,20 @@ var AlarmService = (function () {
             return response.json();
         });
     };
+    AlarmService.prototype.saveAlarm = function (alarm) {
+        return this.http.post('api/alarm', alarm)
+            .toPromise()
+            .then(function (response) {
+            return response.json();
+        });
+    };
+    AlarmService.prototype.removeAlarm = function (id) {
+        return this.http.delete('api/alarm/' + id)
+            .toPromise()
+            .then(function (response) {
+            return response.json();
+        });
+    };
     return AlarmService;
 }());
 AlarmService = __decorate([
@@ -113,6 +113,20 @@ AlarmService = __decorate([
 
 var _a;
 //# sourceMappingURL=alarm.service.js.map
+
+/***/ }),
+
+/***/ 52:
+/***/ (function(module, exports) {
+
+function webpackEmptyContext(req) {
+	throw new Error("Cannot find module '" + req + "'.");
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = 52;
+
 
 /***/ }),
 
@@ -142,6 +156,7 @@ __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dyna
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__alarm_service__ = __webpack_require__(29);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AlarmComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -153,24 +168,86 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
 var AlarmComponent = (function () {
-    function AlarmComponent() {
+    function AlarmComponent(alarmService) {
+        this.alarmService = alarmService;
+        this.alarm = {
+            time: {
+                minute: "00",
+                hour: "00"
+            },
+            repetitions: []
+        };
     }
+    Object.defineProperty(AlarmComponent.prototype, "newAlarm", {
+        set: function (value) {
+            this._newAlarm = value !== 'false';
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(AlarmComponent.prototype, "time", {
+        get: function () {
+            return (this.alarm.time.hour.length < 2 ? '0' + this.alarm.time.hour : this.alarm.time.hour) + ':' + (this.alarm.time.minute.length < 2 ? '0' + this.alarm.time.minute : this.alarm.time.minute);
+        },
+        set: function (time) {
+            var times = time.split(':');
+            this.alarm.time.hour = times[0];
+            this.alarm.time.minute = times[1];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AlarmComponent.prototype, "repetitions", {
+        get: function () {
+            var repetitions = Array(7).fill(false);
+            for (var _i = 0, _a = this.alarm.repetitions; _i < _a.length; _i++) {
+                var day = _a[_i];
+                repetitions[day] = true;
+            }
+            return repetitions;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AlarmComponent.prototype.updateRepetitions = function (repetitions) {
+        var reps = [];
+        for (var index in repetitions) {
+            if (repetitions[index]) {
+                reps.push(index);
+            }
+        }
+        this.alarm.repetitions = reps;
+    };
+    AlarmComponent.prototype.saveAlarm = function () {
+        this.alarmService.saveAlarm(this.alarm);
+    };
+    AlarmComponent.prototype.removeAlarm = function () {
+        this.alarmService.removeAlarm(this.alarm.id);
+    };
     return AlarmComponent;
 }());
 __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* Input */])(),
     __metadata("design:type", Object)
 ], AlarmComponent.prototype, "alarm", void 0);
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* Input */])(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
+], AlarmComponent.prototype, "newAlarm", null);
 AlarmComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_3" /* Component */])({
         selector: 'alarm',
         template: __webpack_require__(150),
         styles: [__webpack_require__(146)]
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__alarm_service__["a" /* AlarmService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__alarm_service__["a" /* AlarmService */]) === "function" && _a || Object])
 ], AlarmComponent);
 
+var _a;
 //# sourceMappingURL=alarm.component.js.map
 
 /***/ }),
@@ -180,7 +257,7 @@ AlarmComponent = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__alarm_service__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__alarm_service__ = __webpack_require__(29);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -228,10 +305,10 @@ var _a;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__alarm_alarm_component__ = __webpack_require__(88);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alarm_service__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alarm_service__ = __webpack_require__(29);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

@@ -16,10 +16,10 @@
 #define PIN_FLOOR_C 6									// Numero de pin del sensor de suelo centro
 #define PIN_FLOOR_D 7									// Numero de pin del sensor de suelo derecho
 
-int[3] proximity_s;									// Sensores de proximidad
-int[3] floor_s;										// Sensores de suelo
-int[2] buttons_s;									// Botones
-float[3] battery_s;
+int proximity_s[3];									// Sensores de proximidad
+int floor_s[3];										// Sensores de suelo
+int buttons_s[2];									// Botones
+float battery_s[3];
 int fd;
 
 void setup_sensors (void)

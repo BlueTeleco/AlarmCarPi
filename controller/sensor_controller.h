@@ -1,10 +1,10 @@
 #ifndef sensor_H_
 #define sensor_H_
 
-int[3] proximity_s;
-int[3] floor_s;
-int[2] buttons_s;
-float[3] battery_s;
+extern int proximity_s[3];
+extern int floor_s[3];
+extern int buttons_s[2];
+extern float battery_s[3];
 
 void setup_sensors (void);
 void read (void);
