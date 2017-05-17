@@ -1,6 +1,8 @@
 *
-!/**/
-!*.*
+controller/alarma
+controller/motor
 .ftpignore
 .ftpconfig
 node_modules
+server/frontend/dist/*
+.vscode/*

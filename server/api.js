@@ -25,6 +25,7 @@ router.route('/alarm').post((req, res, next) => {
 
 });
 router.route('/alarm/:id').delete((req, res, next) => {
+	console.log(req.params.id);
 	alarms.removeAlarm(req.params.id).then(()=>{
 		return res.status(200).send(true);
 	})

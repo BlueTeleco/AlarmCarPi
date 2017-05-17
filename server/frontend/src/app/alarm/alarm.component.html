@@ -1,3 +1,45 @@
 <div class="alarm">
-	{{alarm.hour}}:{{alarm.minute}} {{alarm.repetition}}
+	<form class="form-inline" (submit)="saveAlarm()">
+		<div class="form-group">
+			<input type="time" [(ngModel)]="time" name="time" class="form-control">
+		</div>
+		<div class="checkbox">
+			<label>
+				D <input type="checkbox" name="d" [(ngModel)]="repetitions[0]" id="0" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				L <input type="checkbox" name="l" [(ngModel)]="repetitions[1]" id="1" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				M <input type="checkbox" name="m" [(ngModel)]="repetitions[2]" id="2" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				X <input type="checkbox" name="x" [(ngModel)]="repetitions[3]" id="3" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				J <input type="checkbox" name="j" [(ngModel)]="repetitions[4]" id="4" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				V <input type="checkbox" name="v" [(ngModel)]="repetitions[5]" id="5" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<div class="checkbox">
+			<label>
+				S <input type="checkbox" name="s" [(ngModel)]="repetitions[6]" id="6" (ngModelChange)="updateRepetitions($event)">
+			</label>
+		</div>
+		<button type="submit" class="btn btn-default">Guardar</button>
+		<button class="btn btn-danger" (click)="removeAlarm()" *ngIf="!_newAlarm">Eliminar</button>
+	</form>
+	<!-- {{alarm.hour}}:{{alarm.minute}} {{alarm.repetition}}-->
 </div>

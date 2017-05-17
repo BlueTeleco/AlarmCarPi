@@ -17,9 +17,11 @@ alarms.init = function () {
 function mapAlarm(alarm) {
 	return {
 		id: alarm.comment().toString(),
-		hour: alarm.hour().toString(),
-		minute: alarm.minute().toString(),
-		repetition: alarm.dow().toString().split(',')
+		time: {
+			hour: alarm.hour().toString(),
+			minute: alarm.minute().toString()
+		},
+		repetitions: alarm.dow().toString().split(',')
 	};
 }
 
