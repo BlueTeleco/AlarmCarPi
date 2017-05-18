@@ -5,8 +5,8 @@
 											// Librerias para la interfaz con GPIO
 #include <wiringPi.h>
 
-#define PIN_FIN 15									// Numero de pin del boton de fin
-#define PIN_APLAZA 14									// Numero de pin del boton de aplazar
+#define PIN_FIN		15								// Numero de pin del boton de fin
+#define PIN_APLAZA	14									// Numero de pin del boton de aplazar
 
 #define PIN_PROX_I 2									// Numero de pin del sensor de proximidad izquierdo
 #define PIN_PROX_C 3									// Numero de pin del sensor de proximidad centro
@@ -31,11 +31,18 @@ void setup_sensors (void)
 	pinMode(PIN_PROX_C, INPUT);							// Sensor de proximidad centro
 	pinMode(PIN_PROX_D, INPUT);							// Sensor de proximidad derecho
 
+	pinMode(PIN_FLOOR_I, INPUT);							// Sensor de suelo izquierdo
+	pinMode(PIN_FLOOR_C, INPUT);							// Sensor de suelo centro
+	pinMode(PIN_FLOOR_D, INPUT);							// Sensor de suelo derecho
+	
 	pullUpDnControl(PIN_FIN, PUD_DOWN);						// Ponemos una resistencia de pull down en nuestros pines
 	pullUpDnControl(PIN_APLAZA, PUD_DOWN);
 	pullUpDnControl(PIN_PROX_I, PUD_DOWN);
 	pullUpDnControl(PIN_PROX_D, PUD_DOWN);
 	pullUpDnControl(PIN_PROX_C, PUD_DOWN);
+	pullUpDnControl(PIN_FLOOR_I, PUD_DOWN);
+	pullUpDnControl(PIN_FLOOR_D, PUD_DOWN);
+	pullUpDnControl(PIN_FLOOR_C, PUD_DOWN);
 
 	fd = serialOpen("/dev/serial0", 9600);
 }

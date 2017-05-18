@@ -10,6 +10,12 @@
 #include "actuator_controller.h"
 #include "sensor_controller.h"
 
+#define VEL_INI 50									// Velocidad base inicial
+#define VEL_MED 25									// Velocidad base bateria media
+#define VEL_LOW 0									// Velocidad base bateria baja
+
+#define BATT_MED 3.5									// Nivel a partir del cual la bateria se considera media
+#define BATT_LOW 3.4									// Nivel a partir del cual la bateria se considera baja
 
 typedef enum {RUNNING, SNOOZE, MED_BATT, LOW_BATT, STOP} estados;			// Distintos estados en los que puede estar el robot
 
@@ -18,7 +24,7 @@ struct sigaction sa,osa;
 int main (void)
 {
 	estados state;
-	int base_vel = 50;
+	int base_vel = VEL_INI;
 
    	memset(&sa, 0, sizeof(sa));							// Expandimos la funcionalidad al llegar una señal de interrupcion
     	sa.sa_handler = &bypass_sigint;							// Para asegurarnos de apagar los motores y el buzzer si esto ocurre
@@ -37,18 +43,18 @@ int main (void)
 	{
 		read();									// Leo los sensores
 
-		if (state == CORRIENDO)							// Estamos en el estado en el que nos movemos
+		if (state == RUNNING)							// Estamos en el estado en el que nos movemos
 		{
 			int vel_izq;
 			int vel_der;
 
-			if(proximity_s[1]){
-				vel_der = 50;
-				vel_izq = -50;
+			if(proximity_s[1] || floor_s[1]){
+				vel_der = base_vel;
+				vel_izq = -base_vel;
 			} else {
 
-				vel_der = (1 - proximity_s[0]) * 50;
-				vel_izq = (1 - proximity_s[2]) * 50;
+				vel_der = (1 - floor_s[0]) * (1 - proximity_s[0]) * base_vel;
+				vel_izq = (1 - floor_s[2]) * (1 - proximity_s[2]) * base_vel;
 			}
 
 			set_speed(0, vel_izq);						// Ponemos una velocidad en la rueda derecha
@@ -66,6 +72,14 @@ int main (void)
 				buzzer_off();						// Apagamos el buzzer
 				stop_motors();						// Apagamos los motores
 			}
+			else if ( fmin(fmin(battery_s[0], battery_s[1]), battery_s[2]) < BATT_MED && base_vel == VEL_INI)
+			{
+				state = MED_BATT;
+			}
+			else if ( fmin(fmin(battery_s[0], battery_s[1]), battery_s[2]) < BATT_LOW && base_vel == VEL_MED)
+			{
+				state = LOW_BATT;
+			}
 		}
 		else if (state == SNOOZE)						// Estamos en el estado de aplazar la alarma
 		{
@@ -80,11 +94,11 @@ int main (void)
 		}
 		else if (state == MED_BATT)						// Estamos en el estado de bateria media, a partir de ahora se moverá a velocidad reducida
 		{
-			base_vel = 25;
+			base_vel = VEL_MED;
 		}
 		else if (state == LOW_BATT)						// Estamos en el estado de bateria baja, a partir de ahora dejara de moverse
 		{
-			base_vel = 0;
+			base_vel = VEL_LOW;
 		}
 		else if (state == STOP)							// Estamos en el estado de finalizar la alarma
 		{
